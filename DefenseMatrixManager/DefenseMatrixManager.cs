@@ -85,6 +85,7 @@ namespace DefenseMatrixManager
 
             //Main case
             On.RoR2.BulletAttack.Fire += BulletAttack_CheckDefenseMatrix;
+            On.RoR2.BlastAttack.Fire += BlastAttack_Fire;   //This is needed for LoS check
 
             //Not actually bulletattacks
             On.EntityStates.GolemMonster.FireLaser.OnEnter += FireLaser_OnEnter;
@@ -101,6 +102,17 @@ namespace DefenseMatrixManager
             On.EntityStates.FalseSonBoss.LunarGazeCharge.Update += LunarGazeCharge_Update;
             On.EntityStates.FalseSonBoss.LunarGazeFire.FixedUpdate += LunarGazeFire_FixedUpdate;
         }
+
+        private static BlastAttack.Result BlastAttack_Fire(On.RoR2.BlastAttack.orig_Fire orig, BlastAttack self)
+        {
+            bool useLoS = self.losType != BlastAttack.LoSType.None;
+            TeamIndex teamIndex = self.teamIndex;
+            if (useLoS) DefenseMatrixManager.EnableMatrices(teamIndex);
+            var toReturn = orig(self);
+            if (useLoS) DefenseMatrixManager.DisableMatrices(teamIndex);
+            return toReturn;
+        }
+
         private static void LaserFatherCharged_FixedUpdate(On.EntityStates.FalseSon.LaserFatherCharged.orig_FixedUpdate orig, EntityStates.FalseSon.LaserFatherCharged self)
         {
             TeamIndex teamIndex = self.GetTeam();
