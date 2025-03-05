@@ -100,8 +100,34 @@ namespace DefenseMatrixManager
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.GetBeamEndPoint += FireBeam_GetBeamEndPoint;
             On.EntityStates.Halcyonite.ChargeTriLaser.Update += ChargeTriLaser_Update;
             On.EntityStates.FalseSon.LaserFatherCharged.FixedUpdate += LaserFatherCharged_FixedUpdate;
-            On.EntityStates.FalseSonBoss.LunarGazeCharge.Update += LunarGazeCharge_Update;
-            On.EntityStates.FalseSonBoss.LunarGazeFire.FixedUpdate += LunarGazeFire_FixedUpdate;
+
+            On.EntityStates.PrimeMeridian.LunarGazeLaserCharge.Update += LunarGazeLaserCharge_Update;
+            On.EntityStates.PrimeMeridian.LunarGazeLaserFire.UpdateTargettingLasers += LunarGazeLaserFire_UpdateTargettingLasers;
+            On.EntityStates.PrimeMeridian.LunarGazeLaserFire.RetractLasers += LunarGazeLaserFire_RetractLasers;
+        }
+
+        private static void LunarGazeLaserFire_RetractLasers(On.EntityStates.PrimeMeridian.LunarGazeLaserFire.orig_RetractLasers orig, EntityStates.PrimeMeridian.LunarGazeLaserFire self)
+        {
+            TeamIndex teamIndex = self.GetTeam();
+            DefenseMatrixManager.EnableMatrices(teamIndex);
+            orig(self);
+            DefenseMatrixManager.DisableMatrices(teamIndex);
+        }
+
+        private static void LunarGazeLaserFire_UpdateTargettingLasers(On.EntityStates.PrimeMeridian.LunarGazeLaserFire.orig_UpdateTargettingLasers orig, EntityStates.PrimeMeridian.LunarGazeLaserFire self)
+        {
+            TeamIndex teamIndex = self.GetTeam();
+            DefenseMatrixManager.EnableMatrices(teamIndex);
+            orig(self);
+            DefenseMatrixManager.DisableMatrices(teamIndex);
+        }
+
+        private static void LunarGazeLaserCharge_Update(On.EntityStates.PrimeMeridian.LunarGazeLaserCharge.orig_Update orig, EntityStates.PrimeMeridian.LunarGazeLaserCharge self)
+        {
+            TeamIndex teamIndex = self.GetTeam();
+            DefenseMatrixManager.EnableMatrices(teamIndex);
+            orig(self);
+            DefenseMatrixManager.DisableMatrices(teamIndex);
         }
 
         private static Vector3 BulletAttack_Fire_ReturnHit(On.RoR2.BulletAttack.orig_Fire_ReturnHit orig, BulletAttack self)
@@ -129,22 +155,6 @@ namespace DefenseMatrixManager
         }
 
         private static void LaserFatherCharged_FixedUpdate(On.EntityStates.FalseSon.LaserFatherCharged.orig_FixedUpdate orig, EntityStates.FalseSon.LaserFatherCharged self)
-        {
-            TeamIndex teamIndex = self.GetTeam();
-            DefenseMatrixManager.EnableMatrices(teamIndex);
-            orig(self);
-            DefenseMatrixManager.DisableMatrices(teamIndex);
-        }
-
-        private static void LunarGazeFire_FixedUpdate(On.EntityStates.FalseSonBoss.LunarGazeFire.orig_FixedUpdate orig, EntityStates.FalseSonBoss.LunarGazeFire self)
-        {
-            TeamIndex teamIndex = self.GetTeam();
-            DefenseMatrixManager.EnableMatrices(teamIndex);
-            orig(self);
-            DefenseMatrixManager.DisableMatrices(teamIndex);
-        }
-
-        private static void LunarGazeCharge_Update(On.EntityStates.FalseSonBoss.LunarGazeCharge.orig_Update orig, EntityStates.FalseSonBoss.LunarGazeCharge self)
         {
             TeamIndex teamIndex = self.GetTeam();
             DefenseMatrixManager.EnableMatrices(teamIndex);
