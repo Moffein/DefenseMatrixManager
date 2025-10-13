@@ -1,4 +1,5 @@
 ﻿using EntityStates;
+using HG;
 using MonoMod.RuntimeDetour;
 using RoR2;
 using System;
@@ -148,6 +149,31 @@ namespace DefenseMatrixManager
         {
             bool useLoS = self.losType != BlastAttack.LoSType.None;
             TeamIndex teamIndex = self.teamIndex;
+
+            //enable LoS if matrix is active and within radius
+            if (!useLoS && activeDefenseMatrices.Count > 0)
+            {
+                foreach (DefenseMatrixInfo info in activeDefenseMatrices)
+                {
+                    if (info.teamIndex != teamIndex)
+                    {
+                        foreach (Collider cl in info.colliders)
+                        {
+                            float boundsRadius = cl.bounds.extents.ComponentMax() * 0.5f;
+                            float blastRadiusSqr = (self.radius + boundsRadius) * (self.radius + boundsRadius);
+
+                            if ((cl.bounds.center - self.position).sqrMagnitude <= blastRadiusSqr)
+                            {
+                                useLoS = true;
+                                self.losType = BlastAttack.LoSType.NearestHit;
+                                break;
+                            }
+                        }
+                    }
+                    if (useLoS) break;
+                }
+            }
+
             if (useLoS) DefenseMatrixManager.EnableMatrices(teamIndex);
             var toReturn = orig(self);
             if (useLoS) DefenseMatrixManager.DisableMatrices(teamIndex);
