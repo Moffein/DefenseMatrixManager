@@ -85,9 +85,8 @@ namespace DefenseMatrixManager
             RoR2.Stage.onStageStartGlobal += ClearDefenseMatrices;
 
             //Main case
-            On.RoR2.BulletAttack.Fire += BulletAttack_CheckDefenseMatrix;
             On.RoR2.BlastAttack.Fire += BlastAttack_Fire;   //This is needed for LoS check
-            On.RoR2.BulletAttack.Fire_ReturnHit += BulletAttack_Fire_ReturnHit;
+            On.RoR2.BulletAttack.Fire_FireArgs += BulletAttack_CheckDefenseMatrix;
 
             //Not actually bulletattacks
             On.EntityStates.GolemMonster.FireLaser.OnEnter += FireLaser_OnEnter;
@@ -129,20 +128,6 @@ namespace DefenseMatrixManager
             DefenseMatrixManager.EnableMatrices(teamIndex);
             orig(self);
             DefenseMatrixManager.DisableMatrices(teamIndex);
-        }
-
-        private static Vector3 BulletAttack_Fire_ReturnHit(On.RoR2.BulletAttack.orig_Fire_ReturnHit orig, BulletAttack self)
-        {
-            TeamIndex teamIndex = TeamIndex.None;
-            if (self.owner)
-            {
-                TeamComponent tc = self.owner.GetComponent<TeamComponent>();
-                if (tc) teamIndex = tc.teamIndex;
-            }
-            DefenseMatrixManager.EnableMatrices(teamIndex);
-            var ret = orig(self);
-            DefenseMatrixManager.DisableMatrices(teamIndex);
-            return ret;
         }
 
         private static BlastAttack.Result BlastAttack_Fire(On.RoR2.BlastAttack.orig_Fire orig, BlastAttack self)
@@ -253,7 +238,7 @@ namespace DefenseMatrixManager
             DefenseMatrixManager.DisableMatrices(teamIndex);
         }
 
-        private static void BulletAttack_CheckDefenseMatrix(On.RoR2.BulletAttack.orig_Fire orig, BulletAttack self)
+        private static void BulletAttack_CheckDefenseMatrix(On.RoR2.BulletAttack.orig_Fire_FireArgs orig, BulletAttack self, BulletAttack.FireArgs args)
         {
             TeamIndex teamIndex = TeamIndex.None;
             if (self.owner)
@@ -262,7 +247,7 @@ namespace DefenseMatrixManager
                 if (tc) teamIndex = tc.teamIndex;
             }
             DefenseMatrixManager.EnableMatrices(teamIndex);
-            orig(self);
+            orig(self, args);
             DefenseMatrixManager.DisableMatrices(teamIndex);
         }
 

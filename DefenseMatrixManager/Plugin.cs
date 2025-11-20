@@ -3,7 +3,7 @@ using System;
 
 namespace DefenseMatrixManager
 {
-    [BepInPlugin("com.Moffein.DefenseMatrixManager", "DefenseMatrixManager", "1.1.0")]
+    [BepInPlugin("com.Moffein.DefenseMatrixManager", "DefenseMatrixManager", "1.1.1")]
     public class Plugin : BaseUnityPlugin
     {
         private void Awake()
