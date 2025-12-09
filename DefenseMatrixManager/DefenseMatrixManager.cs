@@ -100,10 +100,19 @@ namespace DefenseMatrixManager
             On.EntityStates.EngiTurret.EngiTurretWeapon.FireBeam.GetBeamEndPoint += FireBeam_GetBeamEndPoint;
             On.EntityStates.Halcyonite.ChargeTriLaser.Update += ChargeTriLaser_Update;
             On.EntityStates.FalseSon.LaserFatherCharged.FixedUpdate += LaserFatherCharged_FixedUpdate;
+            On.EntityStates.SolusWing.ExpandingLaserBase.UpdateTargetPoint += ExpandingLaserBase_UpdateTargetPoint;
 
             On.EntityStates.PrimeMeridian.LunarGazeLaserCharge.Update += LunarGazeLaserCharge_Update;
             On.EntityStates.PrimeMeridian.LunarGazeLaserFire.UpdateTargettingLasers += LunarGazeLaserFire_UpdateTargettingLasers;
             On.EntityStates.PrimeMeridian.LunarGazeLaserFire.RetractLasers += LunarGazeLaserFire_RetractLasers;
+        }
+
+        private static void ExpandingLaserBase_UpdateTargetPoint(On.EntityStates.SolusWing.ExpandingLaserBase.orig_UpdateTargetPoint orig, EntityStates.SolusWing.ExpandingLaserBase self)
+        {
+            TeamIndex teamIndex = self.GetTeam();
+            DefenseMatrixManager.EnableMatrices(teamIndex);
+            orig(self);
+            DefenseMatrixManager.DisableMatrices(teamIndex);
         }
 
         private static void LunarGazeLaserFire_RetractLasers(On.EntityStates.PrimeMeridian.LunarGazeLaserFire.orig_RetractLasers orig, EntityStates.PrimeMeridian.LunarGazeLaserFire self)
